@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { selectedModel, selectedVoice, selectedMode, showTokens, selectedSize, selectedQuality } from '../stores/stores';
+    import { selectedModel, selectedVoice, selectedMode, showTokens, selectedSize, selectedQuality, configuredEndpoint } from '../stores/stores';
     import { createEventDispatcher } from 'svelte';
     import CloseIcon from "../assets/close.svg";
     import { writable, get, derived } from "svelte/store";
@@ -96,7 +96,7 @@ async function checkAPIConnection() {
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/models', {
+    const response = await fetch(`${get(configuredEndpoint)}/v1/models`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localApiTextField}`,
@@ -132,7 +132,7 @@ async function fetchModels(apiKey: string) {
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/models', {
+    const response = await fetch(`${get(configuredEndpoint)}/v1/models`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -166,6 +166,7 @@ async function fetchModels(apiKey: string) {
   localStorage.setItem('selectedModel', get(selectedModel));
   localStorage.setItem('selectedVoice', get(selectedVoice));
   localStorage.setItem('selectedMode', get(selectedMode));
+  localStorage.setItem('configuredEndpoint', get(configuredEndpoint));
 
   dispatch('settings-changed');
   console.log("Settings saved.");
@@ -198,6 +199,13 @@ handleClose();
       </button>
       <h2 class="text-xl font-bold mb-4">Settings</h2>
     <div class="mb-4">
+  <label for="api-endpoint" class="block font-medium mb-2">Open API Endpoint</label>
+  <input 
+    type="text" 
+    name="api-endpoint"
+    class="border text-black border-gray-300 p-2 rounded w-full"
+    bind:value={$configuredEndpoint}
+  />
   <label for="api-key" class="block font-medium mb-2">API Key</label>
   <div class="flex items-center">
     <input

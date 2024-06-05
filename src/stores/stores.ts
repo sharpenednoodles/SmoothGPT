@@ -59,7 +59,7 @@ export const selectedMode = writable(localStorage.getItem('selectedMode') || 'GP
 
 export const selectedSize = writable(localStorage.getItem('selectedSize') || '1024x1024');
 export const selectedQuality = writable(localStorage.getItem('selectedQuality') || 'standard');
-
+export const configuredEndpoint = writable(localStorage.getItem('configuredEndpoint') || 'https://api.openai.com');
 
 selectedModel.subscribe(value => {
     localStorage.setItem("selectedModel", value);

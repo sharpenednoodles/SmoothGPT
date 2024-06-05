@@ -2,7 +2,7 @@ import { get, writable } from 'svelte/store';
 import { Configuration, OpenAIApi } from "openai";
 import type { ChatCompletionRequestMessage,  } from "openai";
 import type  { ChatCompletionRequestMessageRoleEnum } from "openai";
-import { apiKey} from "../stores/stores";
+import { apiKey, configuredEndpoint} from "../stores/stores";
 import { selectedModel, selectedVoice, audioUrls, selectedSize, selectedQuality, defaultAssistantRole, isStreaming, streamContext } from '../stores/stores';
 import { conversations, chosenConversationId, combinedTokens, userRequestedStreamClosure } from "../stores/stores";
 import { setHistory, countTokens, estimateTokens, displayAudioMessage, cleanseMessage } from '../managers/conversationManager';
@@ -170,7 +170,7 @@ export async function sendTTSMessage(text: string, model: string, voice: string,
   };
 
   try {
-    const response = await fetch("https://api.openai.com/v1/audio/speech", {
+    const response = await fetch(`${get(configuredEndpoint)}/v1/audio/speech`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -262,7 +262,7 @@ let finalMessages = [...cleansedMessages, currentMessage];
   currentHistory = [...currentHistory];
   isStreaming.set(true);  
 
-  let source = new SSE("https://api.openai.com/v1/chat/completions", {
+  let source = new SSE(`${get(configuredEndpoint)}/v1/chat/completions`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${get(apiKey)}`,
@@ -391,7 +391,7 @@ let finalMessages = [...cleansedMessages, currentMessage];
     currentHistory = [...currentHistory];
     isStreaming.set(true);
 
-    let source = new SSE("https://api.openai.com/v1/chat/completions", {
+    let source = new SSE(`${get(configuredEndpoint)}/v1/chat/completions`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${get(apiKey)}`,
@@ -522,7 +522,7 @@ console.log(msg);
     currentHistory = [...currentHistory];
     isStreaming.set(true);
 
-    let source = new SSE("https://api.openai.com/v1/chat/completions", {
+    let source = new SSE(`${get(configuredEndpoint)}/v1/chat/completions`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${get(apiKey)}`,
@@ -641,7 +641,7 @@ console.log(msg);
     const prompt = cleansedMessages[cleansedMessages.length - 1].content;
   
     try {
-      let response = await fetch("https://api.openai.com/v1/images/generations", {
+      let response = await fetch(`${get(configuredEndpoint)}/v1/images/generations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
